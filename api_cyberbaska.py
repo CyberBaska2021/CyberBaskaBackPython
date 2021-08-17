@@ -3,6 +3,18 @@ from flask_cors import CORS
 import os
 
 from update_stats import  insert_stats
+from get_teams import  get_teams
+from get_teams import  get_team_list
+
+import json
+from bson import ObjectId
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+
 
 # PARTE2
 app = Flask(__name__)
@@ -35,6 +47,27 @@ def hello():
 def inserir_stats():
 
     return insert_stats()
+
+@app.route('/api/get_teams_list', methods=['GET'])
+def get_teams_list():
+
+    return jsonify(get_team_list())
+
+@app.route('/api/get_team_a', methods=['POST'])
+def get_team():
+
+    team = request.json
+    print(team)
+
+    return JSONEncoder().encode(get_teams(team['TEAM_A']))
+
+@app.route('/api/get_team_b', methods=['POST'])
+def get_team_b():
+
+    team = request.json
+    print(team)
+
+    return JSONEncoder().encode(get_teams(team['TEAM_B']))    
 
 
 if __name__ == '__main__':
